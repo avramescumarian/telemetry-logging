@@ -1,0 +1,15 @@
+{
+    "log_level": "DEBUG",
+    "drivers": [
+        {
+            "type": "cli",
+            "settings": {}
+        },
+        {
+            "type": "file",
+            "settings": {
+                "file_path": "logs/app.log"
+            }
+        }
+    ]
+}

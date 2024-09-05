@@ -1,0 +1,8 @@
+{"timestamp":"2024-09-05T14:56:34.340165+03:00","level":0,"message":"Debug message: Starting application","metadata":{"environment":"development"}}
+{"timestamp":"2024-09-05T14:56:34.340344+03:00","level":1,"message":"Info message: Application started"}
+{"timestamp":"2024-09-05T14:56:34.34036+03:00","level":2,"message":"Warning message: High memory usage","metadata":{"usage":"512MB"}}
+{"timestamp":"2024-09-05T14:56:34.340373+03:00","level":3,"message":"Error message: Application crashed","metadata":{"error_code":1234}}
+{"timestamp":"2024-09-05T14:56:34.340407+03:00","level":1,"message":"Transaction started","trace_id":"0a0a4b6a-c024-4a13-ae1a-a488c4be9081"}
+{"timestamp":"2024-09-05T14:56:34.340417+03:00","level":0,"message":"Processing payment","metadata":{"payment_method":"credit_card"},"trace_id":"0a0a4b6a-c024-4a13-ae1a-a488c4be9081"}
+{"timestamp":"2024-09-05T14:56:34.340432+03:00","level":3,"message":"Payment failed","metadata":{"error":"Insufficient funds"},"trace_id":"0a0a4b6a-c024-4a13-ae1a-a488c4be9081"}
+{"timestamp":"2024-09-05T14:56:34.340442+03:00","level":1,"message":"Transaction ended","trace_id":"0a0a4b6a-c024-4a13-ae1a-a488c4be9081"}
