@@ -7,35 +7,35 @@ The Telemetry Logging Package is designed to simplify logging across multiple pl
 ### Features
 - **Multiple Log Levels**: Supports `DEBUG`, `INFO`, `WARN`, and `ERROR` log levels.
 - **Transaction Logging**: Group related log entries with a unique `TraceID` for easier tracking.
-- **Multiple Drivers**: Logs can be output to the CLI or a file (JSON format).
+- **Multiple Drivers**: Logs can be output to the CLI, file, Syslog, database, Elasticsearch, HTTP, Kafka, and Graylog.
 - **Configurable**: Logging is configurable via a JSON config file, allowing easy setup without modifying the core code.
 - **Extensible**: New drivers can be added easily without changing the core logging logic.
 
 ## Installation
 
-1. Clone the repository or add it as a module to your project.
+1. Clone the repository or add it as a module to your project:
    
-```bash
-git clone https://github.com/username/telemetry-logging.git
-```
+   ```bash
+   git clone https://github.com/username/telemetry-logging.git
+   ```
 
 2. Initialize Go modules (if not done yet) by running:
 
-```bash
-go mod init telemetry-logging
-```
+   ```bash
+   go mod init telemetry-logging
+   ```
 
 3. Install dependencies:
 
-```bash
-go mod tidy
-```
+   ```bash
+   go mod tidy
+   ```
 
 ## Usage
 
 ### Configuration
 
-Create a configuration file (e.g., `config/config.json`) to define log levels and drivers.
+Create a configuration file (e.g., `config/config.json`) to define log levels and drivers. The package supports several built-in drivers including `cli`, `file`, `syslog`, `db` (database), `elasticsearch`, `http`, `kafka`, and `graylog`.
 
 ```json
 {
@@ -50,13 +50,41 @@ Create a configuration file (e.g., `config/config.json`) to define log levels an
             "settings": {
                 "file_path": "logs/app.log"
             }
+        },
+        {
+            "type": "syslog",
+            "settings": {
+                "address": "localhost:514"
+            }
+        },
+        {
+            "type": "db",
+            "settings": {
+                "dsn": "user:password@tcp(localhost:3306)/logdb"
+            }
+        },
+        {
+            "type": "elasticsearch",
+            "settings": {
+                "index": "logs-index"
+            }
+        },
+        {
+            "type": "http",
+            "settings": {
+                "endpoint": "https://example.com/api/logs"
+            }
+        },
+        {
+            "type": "kafka",
+            "settings": {
+                "broker": "localhost:9092",
+                "topic": "logs"
+            }
         }
     ]
 }
 ```
-
-- **log_level**: Sets the minimum log level for logging (`DEBUG`, `INFO`, `WARN`, `ERROR`).
-- **drivers**: Specifies where the logs will be output. This example outputs logs to both the CLI and a file.
 
 ### Example Code
 
@@ -128,7 +156,104 @@ func main() {
    go run telemetry.go
    ```
 
-3. The logs will be output to both the CLI and the file specified in the configuration (`logs/app.log`).
+3. The logs will be output to both the CLI and the file specified in the configuration (`logs/app.log`), as well as to the configured remote drivers (if applicable).
+
+## Built-in Drivers
+
+### 1. **CLI Driver**
+Outputs logs to the command line interface (CLI) for real-time monitoring.
+
+```json
+{
+    "type": "cli",
+    "settings": {}
+}
+```
+
+### 2. **File-based Driver**
+Saves logs to a file in JSON format for future review.
+
+```json
+{
+    "type": "file",
+    "settings": {
+        "file_path": "logs/app.log"
+    }
+}
+```
+
+### 3. **Syslog Driver**
+Sends logs to a Syslog server, commonly used in Linux environments for centralized logging.
+
+```json
+{
+    "type": "syslog",
+    "settings": {
+        "address": "localhost:514"
+    }
+}
+```
+
+### 4. **Database Driver**
+Stores logs in a relational database such as MySQL or PostgreSQL for centralized storage and querying.
+
+```json
+{
+    "type": "db",
+    "settings": {
+        "dsn": "user:password@tcp(localhost:3306)/logdb"
+    }
+}
+```
+
+### 5. **Elasticsearch Driver**
+Sends logs to an Elasticsearch cluster for efficient storage, search, and analytics.
+
+```json
+{
+    "type": "elasticsearch",
+    "settings": {
+        "index": "logs-index"
+    }
+}
+```
+
+### 6. **HTTP Driver**
+Sends logs to a remote server via an HTTP POST request.
+
+```json
+{
+    "type": "http",
+    "settings": {
+        "endpoint": "https://example.com/api/logs"
+    }
+}
+```
+
+### 7. **Kafka Driver**
+Sends logs to an Apache Kafka topic for distributed, real-time logging and analytics.
+
+```json
+{
+    "type": "kafka",
+    "settings": {
+        "broker": "localhost:9092",
+        "topic": "logs"
+    }
+}
+```
+
+### 8. **Graylog Driver**
+Sends logs to a Graylog instance over UDP for log aggregation and management.
+
+```json
+{
+    "type": "graylog",
+    "settings": {
+        "address": "localhost:12201"
+    }
+}
+```
 
 ## Project Structure
 
@@ -137,8 +262,13 @@ telemetry-logging/
 ├── config/
 │   └── config.go              # Handles configuration loading
 ├── drivers/
-│   ├── cli.go                 # CLI driver for logging
-│   └── file.go                # File-based driver for logging
+│   ├── cli.go                 # CLI driver
+│   ├── file.go                # File-based driver
+│   ├── syslog.go              # Syslog driver
+│   ├── db.go                  # Database driver
+│   ├── elasticsearch.go       # Elasticsearch driver
+│   ├── http.go                # HTTP/REST API driver
+│   ├── kafka.go               # Kafka driver
 ├── logger/
 │   ├── logger.go              # Main logger implementation
 │   ├── log_level.go           # Log level definitions
@@ -153,7 +283,7 @@ telemetry-logging/
 
 ### Adding a New Driver
 
-To add a new logging driver (e.g., for a remote logging service), implement the `Driver` interface and add it to the `MultiLogger` using `AddDriver`.
+To add a new logging driver (e.g., for a remote logging service), implement the `Driver` interface and register it using the `RegisterDriver` function in `logger/driver_registry.go`.
 
 ```go
 type Driver interface {
@@ -161,28 +291,45 @@ type Driver interface {
 }
 ```
 
-### Example of Adding a Remote Driver:
+#### Example of Adding a Remote Driver:
 
 ```go
 package drivers
 
 import (
     "telemetry-logging/logger"
+    "fmt"
+    "net/http"
+    "bytes"
 )
 
 type RemoteDriver struct {
-    Level logger.LogLevel
+    Level    logger.LogLevel
+    Endpoint string
 }
 
-func NewRemoteDriver(level logger.LogLevel) *RemoteDriver {
-    return &RemoteDriver{Level: level}
+func NewRemoteDriver(config map[string]interface{}) (logger.Driver, error) {
+    endpoint := config["endpoint"].(string)
+    return &RemoteDriver{
+        Level:    logger.DEBUG,
+        Endpoint: endpoint,
+    }, nil
 }
 
 func (r *RemoteDriver) Log(entry logger.LogEntry) error {
     if entry.Level < r.Level {
         return nil
     }
-    // Code to send log entry to a remote server
+
+    payload, err := json.Marshal(entry)
+    if err != nil {
+        return err
+    }
+
+    _, err = http.Post(r.Endpoint, "application/json", bytes.NewBuffer(payload))
+    if err != nil {
+        return err
+    }
     return nil
 }
 ```
@@ -196,7 +343,3 @@ go test -v
 ```
 
 This will run the tests in `telemetry_test.go` and output the results.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
