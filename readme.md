@@ -339,7 +339,5 @@ func (r *RemoteDriver) Log(entry logger.LogEntry) error {
 Unit tests are included for different parts of the package. To run the tests, use:
 
 ```bash
-go test -v
+go test ./... -v
 ```
-
-This will run the tests in `telemetry_test.go` and output the results.
