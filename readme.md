@@ -16,7 +16,7 @@ The Telemetry Logging Package is designed to simplify logging across multiple pl
 1. Clone the repository or add it as a module to your project:
    
    ```bash
-   git clone https://github.com/username/telemetry-logging.git
+   git clone https://github.com/avramescumarian/telemetry-logging.git
    ```
 
 2. Initialize Go modules (if not done yet) by running:
