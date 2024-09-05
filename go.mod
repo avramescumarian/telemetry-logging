@@ -1,4 +1,4 @@
-module github.com/username/telemetry-logging
+module telemetry-logging
 
 go 1.21.4
 
