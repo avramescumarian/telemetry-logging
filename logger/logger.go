@@ -61,9 +61,12 @@ func (m *MultiLogger) SetLevel(level LogLevel) {
 
 // WithTrace sets the TraceID for transaction logs.
 func (m *MultiLogger) WithTrace(traceID string) Logger {
-	newLogger := *m
-	newLogger.traceID = traceID
-	return &newLogger
+	newLogger := &MultiLogger{
+		drivers: m.drivers, // Copy reference to the same drivers
+		level:   m.level,   // Copy the log level
+		traceID: traceID,   // Set the new TraceID
+	}
+	return newLogger
 }
 
 // Log creates a log entry and dispatches it to all drivers.
