@@ -7,7 +7,7 @@ The Telemetry Logging Package is designed to simplify logging across multiple pl
 ### Features
 - **Multiple Log Levels**: Supports `DEBUG`, `INFO`, `WARN`, and `ERROR` log levels.
 - **Transaction Logging**: Group related log entries with a unique `TraceID` for easier tracking.
-- **Multiple Drivers**: Logs can be output to the CLI, file, Syslog, database, Elasticsearch, HTTP, Kafka, and Graylog.
+- **Multiple Drivers**: Logs can be output to the CLI, file, Syslog, database, Elasticsearch, HTTP, Kafka.
 - **Configurable**: Logging is configurable via a JSON config file, allowing easy setup without modifying the core code.
 - **Extensible**: New drivers can be added easily without changing the core logging logic.
 
@@ -243,18 +243,6 @@ Sends logs to an Apache Kafka topic for distributed, real-time logging and analy
 }
 ```
 
-### 8. **Graylog Driver**
-Sends logs to a Graylog instance over UDP for log aggregation and management.
-
-```json
-{
-    "type": "graylog",
-    "settings": {
-        "address": "localhost:12201"
-    }
-}
-```
-
 ## Project Structure
 
 ```
@@ -277,8 +265,6 @@ telemetry-logging/
 │   ├── http_test.go           # Unit tests for HTTP driver
 │   ├── kafka.go               # Kafka driver
 │   ├── kafka_test.go          # Unit tests for Kafka driver
-│   ├── graylog.go             # Graylog driver
-│   ├── graylog_test.go        # Unit tests for Graylog driver
 ├── logger/
 │   ├── logger.go              # Main logger implementation
 │   ├── logger_test.go         # Unit tests for logger
