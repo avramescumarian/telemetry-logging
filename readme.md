@@ -35,7 +35,7 @@ The Telemetry Logging Package is designed to simplify logging across multiple pl
 
 ### Configuration
 
-Create a configuration file (e.g., `config/config.json`) to define log levels and drivers. The package supports several built-in drivers including `cli`, `file`, `syslog`, `db` (database), `elasticsearch`, `http`, `kafka`, and `graylog`.
+Create a configuration file (e.g., `config/config.json`) to define log levels and drivers. The package supports several built-in drivers including `cli`, `file`, `syslog`, `db` (database), `elasticsearch`, `http`, `kafka`.
 
 ```json
 {
@@ -153,7 +153,7 @@ func main() {
 2. **Run the Go program**:
 
    ```bash
-   go run telemetry.go
+   go run showcase.go
    ```
 
 3. The logs will be output to both the CLI and the file specified in the configuration (`logs/app.log`), as well as to the configured remote drivers (if applicable).
@@ -260,21 +260,33 @@ Sends logs to a Graylog instance over UDP for log aggregation and management.
 ```
 telemetry-logging/
 ├── config/
-│   └── config.go              # Handles configuration loading
+│   ├── config.go              # Configuration handling
+│   └── config_test.go         # Unit tests for config
 ├── drivers/
 │   ├── cli.go                 # CLI driver
+│   ├── cli_test.go            # Unit tests for CLI driver
 │   ├── file.go                # File-based driver
+│   ├── file_test.go           # Unit tests for file driver
 │   ├── syslog.go              # Syslog driver
+│   ├── syslog_test.go         # Unit tests for syslog driver
 │   ├── db.go                  # Database driver
+│   ├── db_test.go             # Unit tests for database driver
 │   ├── elasticsearch.go       # Elasticsearch driver
-│   ├── http.go                # HTTP/REST API driver
+│   ├── elasticsearch_test.go  # Unit tests for Elasticsearch driver
+│   ├── http.go                # HTTP driver
+│   ├── http_test.go           # Unit tests for HTTP driver
 │   ├── kafka.go               # Kafka driver
+│   ├── kafka_test.go          # Unit tests for Kafka driver
+│   ├── graylog.go             # Graylog driver
+│   ├── graylog_test.go        # Unit tests for Graylog driver
 ├── logger/
 │   ├── logger.go              # Main logger implementation
+│   ├── logger_test.go         # Unit tests for logger
 │   ├── log_level.go           # Log level definitions
-│   └── transaction.go         # Transaction-based logging
-├── telemetry.go               # Example usage of the logging package
-├── telemetry_test.go          # Unit tests for the logging package
+│   ├── log_level_test.go      # Unit tests for log level
+│   └── transaction.go         # Transaction handling
+│   └── transaction_test.go    # Unit tests for transaction handling
+├── showcase.go               # Example usage of the logging package
 ├── go.mod                     # Go module file
 └── README.md                  # Project README file
 ```
